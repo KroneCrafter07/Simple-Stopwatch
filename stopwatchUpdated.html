@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch</title>
+    <h1 style="text-align:center; font-size:69px; color:dodgerblue; font-family: comic sans ms"> Simple Stopwatch
+    </h1>
+</head>
+
+<body style="background-color:antiquewhite">
+
+    <style>
+        .box {
+
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            height: 70px;
+            width: 200px;
+            border-radius: 5px;
+            font-size: 40px;
+            text-align: center;
+            font-family: monaco, monospace
+        }
+
+        table {
+
+            width: auto;
+            margin-left: auto;
+            margin-right: auto;
+
+        }
+
+        .btn {
+
+            display: block;
+            margin-right: auto;
+            margin-left: auto;
+            height: 50px;
+            width: 150px;
+            background-color: lime;
+            border-radius: 20px;
+            font-size: 25px;
+            font-family: comic sans ms;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+
+            filter: brightness(50%)
+        }
+
+        .input {
+
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 360px;
+            height: 50px;
+            font-size: 30px;
+            background-color: antiquewhite;
+
+        }
+
+        .laps {
+
+            text-align: center;
+            font-size: 26px;
+            font-family: monaco, monospace;
+
+        }
+    </style>
+
+    <table>
+        <tr>
+
+            <td>
+                <button class="btn" onclick="start()" id="btn2">Start</button>
+            </td>
+            <td>
+
+            </td>
+            <td>
+                <button class="btn" onclick="lap()" style="background-color:lightgrey">Lap</button>
+            </td>
+            <td>
+                <button class="btn" onclick="stop()" style="background-color:crimson" id="btn">Stop</button>
+            </td>
+        </tr>
+        <tr>
+
+            <td>
+                <input type="text" class="box" id="hr" value="0">
+            </td>
+            <td>
+                <input type="text" class="box" id="min" value="0">
+            </td>
+            <td>
+                <input type="text" class="box" id="sec" value="0">
+            </td>
+            <td>
+                <input type="text" class="box" id="ms" value="0">
+            </td>
+
+        </tr>
+
+    </table>
+
+    <div id="laps">
+
+    </div>
+
+    <script>
+        let ms = 0;
+        let s = 0;
+        let m = 0;
+        let h = 0;
+        let vSwitch = "off";
+        const btn = document.getElementById("btn");
+        let lap1 = ""
+        let lap2 = ""
+        let lap3 = ""
+        let lap4 = ""
+        let lap5 = ""
+        let lap6 = ""
+        let lap7 = ""
+        let lapCount = ""
+        let laps = [];
+        let timerUp = true;
+
+        function start() {
+            if (vSwitch == "off") {
+                vSwitch = "on";
+
+                if (
+                    (document.getElementById("ms").value != "0" ||
+                        document.getElementById("sec").value != "0" ||
+                        document.getElementById("min").value != "0" ||
+                        document.getElementById("hr").value != "0") &&
+                    btn.textContent != "Reset"
+                ) {
+                    ms = document.getElementById("ms").value;
+                    s = document.getElementById("sec").value;
+                    m = document.getElementById("min").value;
+                    h = document.getElementById("hr").value;
+                    timerUp = false;
+                    // console.log(timerUp)
+                }
+
+                btn.style.backgroundColor = "crimson";
+                btn.textContent = "Stop";
+                btn2.textContent = "Start";
+                btn2.style.backgroundColor = "lime";
+                timer();
+            }
+        }
+
+        function timer() {
+            if (vSwitch == "on") {
+                setTimeout(() => {
+
+                    if (timerUp) {
+                        ms++;
+                        if (ms >= 99) {
+                            s++;
+                            ms = 0;
+                        }
+                        if (s >= 59) {
+                            m++;
+                            s = 0
+                        }
+                        if (m >= 59) {
+                            h++
+                            m = 0
+                        }
+                    } else {
+                        ms--;
+                        if (ms < 0) {
+                            s--;
+                            ms = 99;
+                        }
+                        if (s < 0) {
+                            m--;
+                            s = 59
+                        }
+                        if (m < 0) {
+                            h--
+                            m = 59
+                        }
+                    }
+
+
+
+                    document.getElementById("ms").value = ms;
+                    document.getElementById("sec").value = s;
+                    document.getElementById("min").value = m;
+                    document.getElementById("hr").value = h;
+
+                    if (ms == 0 && s == 0 && m == 0 && h == 0) {
+                        stop()
+                    }
+
+                    timer();
+                }, 10);
+            }
+        }
+
+
+        function stop() {
+            if (vSwitch == "off") {
+
+                ms = 0
+                s = 0
+                m = 0
+                h = 0
+                lapCount = 0
+                document.getElementById("ms").value = ms;
+                document.getElementById("sec").value = s;
+                document.getElementById("min").value = m;
+                document.getElementById("hr").value = h;
+                btn.style.backgroundColor = "crimson";
+                btn.textContent = "Stop";
+                laps = [];
+                document.getElementById("laps").innerHTML = "";
+                btn2.textContent = "Start";
+                btn2.style.backgroundColor = "lime";
+                timerUp = true;
+            }
+            else {
+
+                vSwitch = "off";
+                btn.style.backgroundColor = "gray";
+                btn.textContent = "Reset";
+                btn2.style.backgroundColor = "orange";
+                btn2.textContent = "Resume";
+
+            }
+
+        }
+
+
+        function lap() {
+
+            let html = "";
+            laps.push("Lap " + (laps.length + 1) + ": " + h + ":" + m + ":" + s + ":" + ms);
+
+            if (laps.length < 10) {
+                for (let i = (laps.length - 1); i >= 0; i--) {
+                    html += "<p class='laps'>";
+                    // html += "Lap " + (i + 1) + ": ";
+                    html += laps[i];
+                    html += "</p>";
+                }
+            } else {
+                let i = 1;
+                while (i <= 10) {
+                    html += "<p class='laps'>";
+                    html += laps[laps.length - i];
+                    html += "</p>";
+                    i++;
+                }
+            }
+
+            console.log(html);
+            console.log(laps);
+            document.getElementById("laps").innerHTML = html;
+        }
+
+        let i = 0;
+
+    </script>
+</body>
+
+</html>
